@@ -7,6 +7,8 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'dlna_device_dialog.dart';
+import 'subtitle_menu_button.dart';
+import 'video_player_widget.dart' show SubtitleDisplayMode;
 
 class MobilePlayerControls extends StatefulWidget {
   final Player player;
@@ -30,6 +32,14 @@ class MobilePlayerControls extends StatefulWidget {
   final Future<void> Function(double speed) onSetSpeed;
   final Future<void> Function() onEnterPipMode;
   final bool isPipMode;
+  // 字幕相关参数
+  final SubtitleDisplayMode subtitleMode;
+  final List<SubtitleTrack> embeddedSubtitleTracks;
+  final SubtitleTrack? currentSubtitleTrack;
+  final bool hasExternalSubtitle;
+  final Future<void> Function(SubtitleDisplayMode mode) onSubtitleModeChanged;
+  final Future<void> Function(SubtitleTrack track) onSubtitleTrackSelected;
+  final Future<bool> Function(String url) onLoadExternalSubtitle;
 
   const MobilePlayerControls({
     super.key,
@@ -54,6 +64,13 @@ class MobilePlayerControls extends StatefulWidget {
     required this.onSetSpeed,
     required this.onEnterPipMode,
     required this.isPipMode,
+    this.subtitleMode = SubtitleDisplayMode.off,
+    this.embeddedSubtitleTracks = const [],
+    this.currentSubtitleTrack,
+    this.hasExternalSubtitle = false,
+    required this.onSubtitleModeChanged,
+    required this.onSubtitleTrackSelected,
+    required this.onLoadExternalSubtitle,
   });
 
   @override
@@ -486,7 +503,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
   Widget build(BuildContext context) {
     if (widget.isLoadingVideo) {
       return Container(
-        color: Colors.black.withValues(alpha: 0.7),
+        color: Colors.black.withOpacity(0.7),
         child: const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -622,7 +639,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.6),
+                  Colors.black.withOpacity(0.6),
                   Colors.transparent,
                 ],
               ),
@@ -673,7 +690,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.6),
+                  Colors.black.withOpacity(0.6),
                   Colors.transparent,
                 ],
               ),
@@ -890,6 +907,17 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
                       ),
                     ),
                   ),
+                // 字幕按钮
+                SubtitleMenuButton(
+                  subtitleMode: widget.subtitleMode,
+                  embeddedSubtitleTracks: widget.embeddedSubtitleTracks,
+                  currentSubtitleTrack: widget.currentSubtitleTrack,
+                  hasExternalSubtitle: widget.hasExternalSubtitle,
+                  onSubtitleModeChanged: widget.onSubtitleModeChanged,
+                  onSubtitleTrackSelected: widget.onSubtitleTrackSelected,
+                  onLoadExternalSubtitle: widget.onLoadExternalSubtitle,
+                  iconSize: _isFullscreen ? 22 : 20,
+                ),
                 if (Platform.isAndroid)
                   GestureDetector(
                     onTap: () async {
@@ -963,7 +991,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.7),
+            color: Colors.black.withOpacity(0.7),
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
@@ -984,7 +1012,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: Colors.white.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -1028,7 +1056,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.7),
+              color: Colors.black.withOpacity(0.7),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Column(
@@ -1051,7 +1079,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: Colors.white.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -1107,7 +1135,7 @@ class _MobilePlayerControlsState extends State<MobilePlayerControls> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
+                  color: Colors.black.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(

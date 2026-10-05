@@ -59,13 +59,9 @@ android {
                 signingConfig = signingConfigs.getByName("debug")
             }
             
-            // Enable R8 code shrinking, obfuscation, and optimization
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            // R8 code shrinking disabled to reduce memory usage during build
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
         
         debug {

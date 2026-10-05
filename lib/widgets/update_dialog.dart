@@ -167,7 +167,7 @@ class UpdateDialog extends StatelessWidget {
                           child: SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.all(12),
-                              child: GptMarkdown(
+                              child: TexMarkdown(
                                 versionInfo.releaseNotes,
                                 style: FontUtils.poppins(
                                   fontSize: 14,

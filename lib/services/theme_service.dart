@@ -126,7 +126,7 @@ class ThemeService extends ChangeNotifier {
         foregroundColor: Color(0xFF2c3e50),
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
+      cardTheme: const CardTheme(
         color: Color(0xFFffffff),
         elevation: 2,
       ),
@@ -192,7 +192,7 @@ class ThemeService extends ChangeNotifier {
         foregroundColor: Color(0xFFffffff),
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
+      cardTheme: const CardTheme(
         color: Color(0xFF1e1e1e),
         elevation: 2,
       ),
